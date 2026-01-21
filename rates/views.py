@@ -21,7 +21,12 @@ def get_current_usd(request):
         rate = fetch_usd_rate()
         USDRate.objects.create(rate=rate)
 
-    history = USDRate.objects.order_by('-created_at')[:10]
+    rates = USDRate.objects.order_by('-created_at')
+    if rates.count() > 10:
+        for item in rates[10:]:
+            item.delete()
+
+    history = rates[:10]
 
     data = {
         "current_rate": float(rate),
