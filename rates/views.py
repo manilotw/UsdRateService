@@ -27,7 +27,13 @@ def get_current_usd(request):
             rate = last_rate.rate
         else:
             return JsonResponse(
-                {"error": "Unable to fetch USD rate"},
+                {
+                    "status": "error",
+                    "error": {
+                        "code": "RATE_FETCH_FAILED",
+                        "message": "Unable to fetch USD rate"
+                    }
+                },
                 status=503
             )
 
@@ -38,16 +44,20 @@ def get_current_usd(request):
 
     history = rates[:10]
 
-    data = {
-        "current_rate": float(rate),
-        "timestamp": now.isoformat(),
-        "history": [
-            {
-                "rate": float(item.rate),
-                "timestamp": item.created_at.isoformat(),
+    return JsonResponse(
+        {
+            "status": "success",
+            "data": {
+                "current_rate": float(rate),
+                "timestamp": now.isoformat(),
+                "history": [
+                    {
+                        "rate": float(item.rate),
+                        "timestamp": item.created_at.isoformat(),
+                    }
+                    for item in history
+                ]
             }
-            for item in history
-        ]
-    }
-
-    return JsonResponse(data, status=200)
+        },
+        status=200
+    )

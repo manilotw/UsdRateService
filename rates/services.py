@@ -8,7 +8,6 @@ env.read_env()
 
 cbr_url = env.str("CBR_URL")
 
-
 class RateFetchError(Exception):
     pass
 
