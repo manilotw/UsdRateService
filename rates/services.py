@@ -1,8 +1,12 @@
 import requests
 from decimal import Decimal
+from environs import Env
 
 
-CBR_URL = "https://www.cbr-xml-daily.ru/daily_json.js"
+env = Env()
+env.read_env()
+
+cbr_url = env.str("CBR_URL")
 
 
 class RateFetchError(Exception):
@@ -11,7 +15,7 @@ class RateFetchError(Exception):
 
 def fetch_usd_rate():
     try:
-        response = requests.get(CBR_URL, timeout=5)
+        response = requests.get(cbr_url, timeout=5)
         response.raise_for_status()
         data = response.json()
         usd_data = data["Valute"]["USD"]
